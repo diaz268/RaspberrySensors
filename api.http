@@ -1,0 +1,11 @@
+### POST sensors
+POST http://localhost:3000/sensors
+Content-Type: application/json
+
+{
+  "value": "1212a",
+  "voltage": "1712v"
+}
+
+### GET sensors
+GET http://localhost:3000/sensors

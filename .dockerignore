@@ -1,0 +1,10 @@
+.env
+.env.example
+node_modules
+.gitignore
+.git
+README
+Makefile
+docker-compose.yml
+pnpm-lock.yaml
+api.http
