@@ -1,13 +1,25 @@
-/*
- Creates table sensors.
- */
+-- Delete Table
 DROP TABLE sensors;
 
-CREATE TABLE IF NOT EXISTS sensors (
-  id serial PRIMARY KEY,
-  value VARCHAR (50) NOT NULL,
-  voltage VARCHAR (50) NOT NULL,
+-- Create Table
+CREATE TABLE IF NOT EXISTS sensors(
+  value double PRECISION NULL,
+  voltage double PRECISION NULL,
   created_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-TRUNCATE TABLE sensors CASCADE
+TRUNCATE TABLE sensors CASCADE;
+
+-- Create Hypertable
+SELECT create_hypertable('sensors', 'created_on');
+
+-- Create Trigger
+CREATE FUNCTION pg_notify() RETURNS trigger AS $$
+BEGIN
+  PERFORM pg_notify('watch', row_to_json(NEW)::text);
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER watch_pg_notify_trigger AFTER INSERT ON sensors
+FOR EACH ROW EXECUTE PROCEDURE pg_notify();

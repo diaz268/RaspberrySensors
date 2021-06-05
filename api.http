@@ -3,8 +3,8 @@ POST http://localhost:3000/sensors
 Content-Type: application/json
 
 {
-  "value": "1212a",
-  "voltage": "1712v"
+  "value": 0.242,
+  "voltage": 0.25155
 }
 
 ### GET sensors
