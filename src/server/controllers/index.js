@@ -14,10 +14,29 @@ const create = async (req, res) => {
   }
 };
 
-const getAll = async (_req, res) => {
+const getAll = async (req, res) => {
   try {
-    const data = await db.query("SELECT * FROM sensors");
-    res.status(200).json(data.rows);
+    const { rows } = await db.query(
+      "SELECT * FROM sensors ORDER BY created_on DESC LIMIT 12"
+    );
+    //TODO: Transpose array
+    const data = Object.assign(
+      ...Object.keys(rows[0]).map((key) => ({
+        [key]: rows.map((o) => o[key]),
+      }))
+    );
+
+    if (req.ws) {
+      const ws = await req.ws();
+      ws.send(JSON.stringify({ data }));
+
+      db.query('LISTEN "watch"');
+      db.on("notification", (data) =>
+        ws.send(JSON.stringify({ update: data.payload }))
+      );
+    } else {
+      res.status(200).json(data);
+    }
   } catch (err) {
     res.status(500).json(err);
   }
