@@ -1,5 +1,6 @@
 const url = window.location.host;
 const socket = new WebSocket(`ws://${url}/sensors`);
+const $canvas = document.getElementById("chart");
 
 const dateFormat = (date) => {
   const d = new Date(date);
@@ -8,11 +9,16 @@ const dateFormat = (date) => {
 
 const chartData = (payload) => {
   return {
-    labels: payload.created_on.map((v) => dateFormat(v)),
+    labels: payload.created_on.reverse().map((v) => dateFormat(v)),
     datasets: [
       {
-        name: "Voltage",
-        values: payload.voltage,
+        label: "Voltage",
+        data: payload.voltage.reverse(),
+        backgroundColor: "rgb(97 148 254 / 40%)",
+        borderColor: "#6194FE",
+        borderWidth: 3,
+        tension: 0.4,
+        fill: "start",
       },
     ],
   };
@@ -20,32 +26,61 @@ const chartData = (payload) => {
 
 const chartOps = (data) => {
   return {
-    title: "Sensors Val - Voltage",
-    data,
     type: "line",
-    height: 480,
-    colors: ["#7cd6fd", "#743ee2"],
-    animate: false,
-    lineOptions: {
-      regionFill: 1,
-      spline: 1,
-    },
-    tooltipOptions: {
-      formatTooltipY: (d) => d + "  V",
+    data: data,
+    options: {
+      responsive: true,
+      xAxes: [
+        {
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 12,
+          },
+        },
+      ],
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Tiempo",
+            color: "#233050",
+            font: {
+              size: 20,
+              weight: "bold",
+            },
+            padding: { top: 10, left: 0, right: 0, bottom: 0 },
+          },
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: "Voltage",
+            color: "#233050",
+            font: {
+              size: 20,
+              weight: "bold",
+            },
+            padding: { top: 10, left: 0, right: 0, bottom: 0 },
+          },
+        },
+      },
     },
   };
 };
 
 let data;
+let chart;
 socket.onmessage = (e) => {
   const values = JSON.parse(e.data);
   if (values.data) {
     data = chartData(values.data);
+    chart = new Chart($canvas, chartOps(data));
   }
-  const chart = new frappe.Chart("#chart", chartOps(data));
   if (values.update) {
     const { voltage, created_on } = JSON.parse(values.update);
-    chart.addDataPoint(dateFormat(created_on), [voltage], 15);
-    chart.removeDataPoint(0);
+    chart.data.labels.push(dateFormat(created_on));
+    chart.data.datasets[0].data.push(voltage);
+    chart.update();
   }
 };

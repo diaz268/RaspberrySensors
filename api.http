@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "value": 0.242,
-  "voltage": 0.25155
+  "voltage": 0.2042
 }
 
 ### GET sensors
