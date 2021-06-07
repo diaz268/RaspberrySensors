@@ -45,7 +45,7 @@ socket.onmessage = (e) => {
   const chart = new frappe.Chart("#chart", chartOps(data));
   if (values.update) {
     const { voltage, created_on } = JSON.parse(values.update);
-    chart.addDataPoint(dateFormat(created_on), [voltage], 15);
+    chart.addDataPoint(dateFormat(created_on), [voltage], 51);
     chart.removeDataPoint(0);
   }
 };
