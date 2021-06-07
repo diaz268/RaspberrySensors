@@ -1,5 +1,5 @@
 -- Delete Table
-DROP TABLE sensors;
+DROP TABLE IF EXISTS sensors;
 
 -- Create Table
 CREATE TABLE IF NOT EXISTS sensors(

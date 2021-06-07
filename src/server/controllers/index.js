@@ -17,7 +17,7 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const { rows } = await db.query(
-      "SELECT * FROM sensors ORDER BY created_on DESC LIMIT 12"
+      "SELECT * FROM sensors ORDER BY created_on DESC LIMIT 50"
     );
     //TODO: Transpose array
     const data = Object.assign(
