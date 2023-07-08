@@ -1,5 +1,5 @@
 const url = window.location.host;
-const socket = new WebSocket(`ws://${url}/sensors`);
+const socket = new WebSocket(`wss://${url}/sensors`);
 const $canvas = document.getElementById("chart");
 
 const dateFormat = (date) => {
